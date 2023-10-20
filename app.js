@@ -12,7 +12,12 @@ This request listener function takes two arguments which are passed in automatic
 */
 
 const server = http.createServer((request, response) => {
-  response.write('Hello there!'); // configures the response
+  // response.setHeader('Content-Type', 'text/plain');
+  response.setHeader('Content-Type', 'text/html');
+  // above we set an extra header, so we add extra metadata to the response header
+  // when sending back the response that explains to the browser which kind of data is attached
+  // Now, all browsers will render it as such
+  response.write('<h1>Hello there!</h1>'); // configures the response
   response.end(); // sends the response
 });
 
