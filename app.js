@@ -3,8 +3,16 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-// with Express.js we can use a middleware that does this body parsing for us
-// and the very popular package for parsing the request body and adding the parsed body to the request object is the body-parser package
+/*
+
+We need to tell Express.js, which supports such templating engines, as they are called,
+that we want to use this EJS templating engine,
+and where it finds our views
+
+*/
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
@@ -15,9 +23,9 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   const userName = req.body.username || 'Unknown User';
 
-  res.send(
-    `<h1>Hi ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`
-  ); // new method added by Express.js
+  res.render('index', {
+    user: userName
+  }); // tells EJS to parse this views/index.ejs file by using the render() method added by ExpressJS
 });
 
 app.listen(3000);
