@@ -1,18 +1,19 @@
-const fs = require('fs');
+const http = require('http');
 
-fs.readFile('user-data.txt', (err, data) => {
-  if (err) {
-    console.log(err);
-    return;
-  }
-  // console.log(data);
-  console.log(data.toString());
+/*
+
+we create a server
+which requires a request listener as an argument
+this is a function which in the end triggers for every incoming request
+This request listener function takes two arguments which are passed in automatically by Node.js:
+  - a request object
+  - and a response object.
+
+*/
+
+const server = http.createServer((request, response) => {
+  response.write('Hello there!'); // configures the response
+  response.end(); // sends the response
 });
 
-fs.writeFile('user-data.txt', 'username=Max', err => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log('Wrote to file!');
-  }
-});
+server.listen(3000); // required to start the server
