@@ -1,24 +1,26 @@
 const http = require('http');
 
-/*
-
-we create a server
-which requires a request listener as an argument
-this is a function which in the end triggers for every incoming request
-This request listener function takes two arguments which are passed in automatically by Node.js:
-  - a request object
-  - and a response object.
-
-*/
-
 const server = http.createServer((request, response) => {
-  // response.setHeader('Content-Type', 'text/plain');
-  response.setHeader('Content-Type', 'text/html');
-  // above we set an extra header, so we add extra metadata to the response header
-  // when sending back the response that explains to the browser which kind of data is attached
-  // Now, all browsers will render it as such
-  response.write('<h1>Hello there!</h1>'); // configures the response
-  response.end(); // sends the response
+  let body = []; // it has to be an array
+  // console.log(request.method, request.url);
+  request.on('data', chunk => {
+    body.push(chunk);
+  }); // to get body data and parse that, add a listener on request with the "on" method instead of "addEventListener"
+  request.on('end', () => {
+    body = Buffer.concat(body).toString(); // convert this body from an array of data chunks into some string data we can work with
+    // console.log(body);
+    let userName = 'Unknown User';
+    if (body) {
+      userName = body.split('=')[1];
+    }
+
+    // We put this block of code inside so that I send back the response once I'm done parsing the data
+    response.setHeader('Content-Type', 'text/html');
+    response.write(
+      `<h1>Hi ${userName}</h1><form method="POST" action="/"><input name="username" type="text"><button type="submit">Send</button></form>`
+    ); // with that we will get a request, now we just have to parse it with that request object from the createServer function
+    response.end();
+  }); // This will be fired when we're done reading in the request, so when it has been fully parsed
 });
 
-server.listen(3000); // required to start the server
+server.listen(3000);
