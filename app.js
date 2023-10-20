@@ -1,31 +1,36 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const locationRoutes = require('./routes/location');
+
 const app = express();
+
+// app.set('view engine', 'ejs');
+// app.set('views', 'views');
 
 /*
 
-We need to tell Express.js, which supports such templating engines, as they are called,
-that we want to use this EJS templating engine,
-and where it finds our views
+When we parse incoming data for our API which we're now building,
+I don't expect form data anymore but I expect JSON data,
+so I will try to parse incoming JSON data here
 
 */
-app.set('view engine', 'ejs');
-app.set('views', 'views');
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-app.use((req, res, next) => {
-  res.setHeader('Content-Type', 'text/html');
-  next();
-});
+app.use(locationRoutes);
 
-app.use((req, res, next) => {
-  const userName = req.body.username || 'Unknown User';
+// app.use((req, res, next) => {
+//   res.setHeader('Content-Type', 'text/html');
+//   next();
+// });
 
-  res.render('index', {
-    user: userName
-  }); // tells EJS to parse this views/index.ejs file by using the render() method added by ExpressJS
-});
+// app.use((req, res, next) => {
+//   const userName = req.body.username || 'Unknown User';
+
+//   res.render('index', {
+//     user: userName
+//   });
+// });
 
 app.listen(3000);
