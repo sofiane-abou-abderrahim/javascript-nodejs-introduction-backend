@@ -11,10 +11,7 @@ router.post('/add-location', (req, res, next) => {
   locationStorage.locations.push({
     id: id,
     address: req.body.address,
-    coords: {
-      lat: req.body.lat,
-      lng: req.body.lng
-    }
+    coords: { lat: req.body.lat, lng: req.body.lng }
   });
   res.json({ message: 'Stored location!', locId: id }); // send back the id in our response so that the client can generate a link with the id in it
 });
