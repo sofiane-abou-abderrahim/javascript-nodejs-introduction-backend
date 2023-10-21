@@ -1,12 +1,12 @@
 const express = require('express');
-const mongodb = require('mongodb').MongoClient;
+const mongodb = require('mongodb');
 const MongoClient = mongodb.MongoClient;
 
 const router = express.Router();
 
 // Connection URL
 const url =
-  'mongodb+srv://sr1:1wSW89jse7Em5OE2@cluster0.mztbbsh.mongodb.net/locations?retryWrites=true&w=majority';
+  'mongodb+srv://sr1:<password>@cluster0.mztbbsh.mongodb.net/locations?retryWrites=true&w=majority';
 
 // Create a new MongoClient
 const client = new MongoClient(url);
@@ -63,7 +63,7 @@ router.get('/location/:lid', (req, res, next) => {
         _id: new mongodb.ObjectId(locationId)
       },
       function (err, doc) {
-        // if (err) {}
+        // if (doc) {}
         if (!doc) {
           return res.status(404).json({ message: 'Not found!' });
         }
