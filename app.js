@@ -8,15 +8,14 @@ const app = express();
 // app.set('view engine', 'ejs');
 // app.set('views', 'views');
 
-/*
-
-When we parse incoming data for our API which we're now building,
-I don't expect form data anymore but I expect JSON data,
-so I will try to parse incoming JSON data here
-
-*/
-
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
 
 app.use(locationRoutes);
 
