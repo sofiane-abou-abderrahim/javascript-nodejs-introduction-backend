@@ -48,22 +48,29 @@ router.post('/add-location', (req, res, next) => {
   // });
 });
 
-// we retrieve the data for a given ID
 router.get('/location/:lid', (req, res, next) => {
-  // we add an extra segment /:lid to the path for which we filter where we tell to ExpressJS that we have a dynamic segment
-  // Express will handle the URL which contains the ID as part of the URL that we get from the frontend
-  const locationId = req.params.lid; // we retrieve that ID with the "params" that ExpressJS provides to us
+  const locationId = req.params.lid;
 
   client.connect(function (err, client) {
     const db = client.db('locations');
 
+    // THIS WAS ADDED
+    let locationId;
+    try {
+      locationId = new mongodb.ObjectId(locationId);
+    } catch (error) {
+      // return to make sure the other code does not execute
+      return res.status(500).json({ message: 'Invalid id!' });
+    }
+    // END OF ADDED CODE
+
     // Insert a single document
     db.collection('user-locations').findOne(
       {
-        _id: new mongodb.ObjectId(locationId)
+        _id: locationId // will only be reached if the above code didn't throw an error
       },
       function (err, doc) {
-        // if (doc) {}
+        // if (err) {}
         if (!doc) {
           return res.status(404).json({ message: 'Not found!' });
         }
