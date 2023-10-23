@@ -42,7 +42,7 @@ router.post('/add-location', async (req, res, next) => {
 });
 
 router.get('/location/:lid', async (req, res, next) => {
-  const locationId = req.params.lid;
+  locationId = new mongodb.ObjectId(req.params.lid);
 
   await client
     .connect()
@@ -51,7 +51,7 @@ router.get('/location/:lid', async (req, res, next) => {
 
       // Insert a single document
       const doc = await db.collection('user-locations').findOne({
-        _id: new mongodb.ObjectId(locationId)
+        _id: locationId
       });
       // if (err) {}
       if (!doc) {
