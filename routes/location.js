@@ -4,35 +4,33 @@ const MongoClient = mongodb.MongoClient;
 
 const router = express.Router();
 
-const url = 'mongodb://127.0.0.1:27017/locations?retryWrites=true&w=majority';
+const url =
+  'mongodb+srv://<username>:<password>@cluster0.mztbbsh.mongodb.net/locations?retryWrites=true&w=majority';
 
 const client = new MongoClient(url);
 
-// const locationStorage = {
-//     locations: [],
-// };
+const locationStorage = {
+  locations: []
+};
 
-router.post('/add-location', async (req, res, next) => {
+router.post('/add-location', (req, res, next) => {
   // const id = Math.random();
-  await client
-    .connect()
-    .then(async client => {
-      const db = client.db('locations');
+  client.connect(function (err, client) {
+    const db = client.db('locations');
 
-      // Insert a single document
-      const r = await db.collection('user-locations').insertOne({
+    // Insert a single document
+    db.collection('user-locations').insertOne(
+      {
         address: req.body.address,
         coords: { lat: req.body.lat, lng: req.body.lng }
-      });
-      // console.log(r);
-      res.json({
-        message: 'Stored location!',
-        locId: r.insertedId
-      });
-    })
-    .catch(err => {
-      res.status(400).json({ message: err.message });
-    });
+      },
+      function (err, r) {
+        // if (err) {}
+        console.log(r);
+        res.json({ message: 'Stored location!', locId: r.insertedId });
+      }
+    );
+  });
 
   // locationStorage.locations.push({
   //   id: id,
@@ -41,27 +39,36 @@ router.post('/add-location', async (req, res, next) => {
   // });
 });
 
-router.get('/location/:lid', async (req, res, next) => {
-  locationId = new mongodb.ObjectId(req.params.lid);
+router.get('/location/:lid', (req, res, next) => {
+  // const locationId = req.params.lid;
 
-  await client
-    .connect()
-    .then(async client => {
-      const db = client.db('locations');
+  client.connect(function (err, client) {
+    const db = client.db('locations');
 
-      // Insert a single document
-      const doc = await db.collection('user-locations').findOne({
-        _id: locationId
-      });
-      // if (err) {}
-      if (!doc) {
-        return res.status(404).json({ message: 'Not found!' });
+    // THIS WAS ADDED
+    let locationId;
+    try {
+      locationId = new mongodb.ObjectId(req.params.lid);
+    } catch (error) {
+      // return to make sure the other code does not execute
+      return res.status(500).json({ message: 'Invalid id!' });
+    }
+    // END OF ADDED CODE
+
+    // Insert a single document
+    db.collection('user-locations').findOne(
+      {
+        _id: locationId // will only be reached if the above code didn't throw an error
+      },
+      function (err, doc) {
+        // if (err) {}
+        if (!doc) {
+          return res.status(404).json({ message: 'Not found!' });
+        }
+        res.json({ address: doc.address, coordinates: doc.coords });
       }
-      res.json({ address: doc.address, coordinates: doc.coords });
-    })
-    .catch(err => {
-      res.status(400).json({ message: err.message });
-    });
+    );
+  });
 });
 
 module.exports = router;

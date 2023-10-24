@@ -26,7 +26,6 @@ app.use(locationRoutes);
 
 // app.use((req, res, next) => {
 //   const userName = req.body.username || 'Unknown User';
-
 //   res.render('index', {
 //     user: userName
 //   });
